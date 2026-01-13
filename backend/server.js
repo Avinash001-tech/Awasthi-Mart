@@ -75,7 +75,11 @@ app.delete("/api/products/:id", async (req, res) => {
 // MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected ✅"))
-  .catch(err => console.log(err));
+  .catch(err => {
+    console.log("MongoDB Connection Failed ❌");
+    console.error(err.message);
+  });
+
 
 // Server
 const PORT = process.env.PORT || 5000;
