@@ -9,17 +9,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve uploads folder for images
+// ✅ ROOT ROUTE (Render health check)
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀");
+});
+
+// Serve uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// Serve frontend folder
-const frontendPath = path.join(__dirname, "../frontend");
-app.use(express.static(frontendPath));
-
-// Serve each frontend page explicitly
-app.get("/index.html", (req, res) => res.sendFile(path.join(frontendPath, "index.html")));
-app.get("/login.html", (req, res) => res.sendFile(path.join(frontendPath, "login.html")));
-app.get("/admin.html", (req, res) => res.sendFile(path.join(frontendPath, "admin.html")));
 
 // Product model
 const Product = require("./models/product");
@@ -37,7 +33,7 @@ app.post("/api/admin/login", (req, res) => {
   }
 });
 
-// Multer setup for image upload
+// Multer setup
 const storage = multer.diskStorage({
   destination: "./uploads",
   filename: (req, file, cb) => {
@@ -59,44 +55,30 @@ app.post("/api/products", upload.single("image"), async (req, res) => {
     await product.save();
     res.json(product);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: "Something went wrong" });
   }
 });
 
-// Get products (optionally filter by category)
+// Get products
 app.get("/api/products", async (req, res) => {
-  try {
-    const filter = req.query.category ? { category: req.query.category } : {};
-    const products = await Product.find(filter);
-    res.json(products);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Something went wrong" });
-  }
+  const filter = req.query.category ? { category: req.query.category } : {};
+  const products = await Product.find(filter);
+  res.json(products);
 });
 
 // Delete product
 app.delete("/api/products/:id", async (req, res) => {
-  try {
-    await Product.findByIdAndDelete(req.params.id);
-    res.json({ message: "Deleted" });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Something went wrong" });
-  }
+  await Product.findByIdAndDelete(req.params.id);
+  res.json({ message: "Deleted" });
 });
 
-// Connect MongoDB
+// MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected ✅"))
   .catch(err => console.log(err));
 
-// Start server
-// Start server
+// Server
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on ${PORT} 🚀`);
 });
-
