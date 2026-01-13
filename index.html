@@ -81,21 +81,22 @@
 
 <script>
 const container = document.getElementById("products");
+const API_BASE = "https://awasthi-mart-9.onrender.com";
 
 async function loadProducts(category=""){
-  const url = category 
-    ? `http://localhost:5000/api/products?category=${category}` 
-    : `http://localhost:5000/api/products`;
+  const url = category
+    ? `${API_BASE}/api/products?category=${category}`
+    : `${API_BASE}/api/products`;
 
   const res = await fetch(url);
   const data = await res.json();
 
-  container.innerHTML="";
+  container.innerHTML = "";
 
-  data.forEach(p=>{
+  data.forEach(p => {
     container.innerHTML += `
       <div class="card">
-        <img src="http://localhost:5000${p.image}">
+        <img src="${API_BASE}${p.image}">
         <h4>${p.title}</h4>
         <span class="price">₹${p.price}</span>
         <a href="https://wa.me/918840125802" target="_blank">
@@ -106,9 +107,9 @@ async function loadProducts(category=""){
   });
 }
 
-// Page load par sab products
 loadProducts();
 </script>
+
 
 </body>
 </html>
