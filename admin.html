@@ -28,19 +28,19 @@
   <h3>All Products</h3>
   <div id="list" class="admin-list"></div>
 </div>
-
 <script>
+const API_BASE = "https://awasthi-mart-9.onrender.com";
 const list = document.getElementById("list");
 
 async function loadProducts(){
-  const res = await fetch("http://localhost:5000/api/products");
+  const res = await fetch(`${API_BASE}/api/products`);
   const data = await res.json();
   list.innerHTML = "";
 
   data.forEach(p=>{
     list.innerHTML += `
       <div class="admin-card">
-        <img src="http://localhost:5000${p.image}">
+        <img src="${API_BASE}${p.image}">
         <div>
           <b>${p.title}</b><br>
           ₹${p.price}<br>
@@ -60,22 +60,30 @@ async function addProduct(){
   fd.append("category", category.value);
   fd.append("image", image.files[0]);
 
-  await fetch("http://localhost:5000/api/products", {
+  await fetch(`${API_BASE}/api/products`, {
     method:"POST",
     body:fd
   });
 
-  title.value = price.value = desc.value = image.value = "";
+  title.value = "";
+  price.value = "";
+  desc.value = "";
+  image.value = "";
+
   loadProducts();
 }
 
 async function del(id){
-  await fetch(`http://localhost:5000/api/products/${id}`, { method:"DELETE" });
+  await fetch(`${API_BASE}/api/products/${id}`, {
+    method:"DELETE"
+  });
   loadProducts();
 }
 
 loadProducts();
 </script>
+
+
 
 </body>
 </html>
